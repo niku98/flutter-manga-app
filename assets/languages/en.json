@@ -1,0 +1,15 @@
+{
+	"favoriteMovies": "Favorite Movies",
+	"language": "Language",
+	"feedback": "Feeback",
+	"about": "About",
+	"popular": "POPULAR",
+	"now": "NOW",
+	"soon": "COMING SOON",
+	"ok": "OK",
+	"about_description": "Hihi",
+	"something_went_wrong": "Something went wrong...",
+	"network_error": "Please check your network connection and press Retry button",
+	"retry": "Retry",
+	"cast": "Cast"
+}

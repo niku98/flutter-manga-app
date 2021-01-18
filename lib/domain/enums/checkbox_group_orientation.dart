@@ -1,0 +1,1 @@
+enum CheckboxGroupOrientation { VERTICAL, HORIZONTAL }
