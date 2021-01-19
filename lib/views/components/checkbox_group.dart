@@ -13,6 +13,9 @@ class CheckboxGroup extends StatefulWidget {
 
   final List<String> disabled;
 
+  final int columns;
+  final double childAspectRatio;
+
   /// The style to use for the labels.
   final TextStyle labelStyle;
 
@@ -43,6 +46,8 @@ class CheckboxGroup extends StatefulWidget {
     @required this.options,
     this.checked,
     this.disabled,
+    this.columns,
+    this.childAspectRatio,
     this.onChange,
     this.labelStyle = const TextStyle(),
     this.activeColor = AppColors.primary, //defaults to toggleableActiveColor,
@@ -92,6 +97,30 @@ class _CheckboxGroupState extends State<CheckboxGroup> {
       _selected = [];
       _selected.addAll(widget.checked); //use add all to prevent a shallow copy
     }
+
+    return GridView.count(
+      crossAxisCount: widget.orientation == CheckboxGroupOrientation.HORIZONTAL
+          ? 1
+          : (widget.columns ?? 2),
+      childAspectRatio: widget.childAspectRatio ?? 1,
+      scrollDirection: widget.orientation == CheckboxGroupOrientation.HORIZONTAL
+          ? Axis.horizontal
+          : Axis.vertical,
+      children: [
+        for (var index = 0; index < widget.options.length; index++)
+          AppCheckbox(
+            label: widget.options.elementAt(index).label,
+            value: _selected.contains(widget.options.elementAt(index).value),
+            onChanged: (bool isChecked) => onChanged(isChecked, index),
+            checkColor: widget.checkColor,
+            activeColor:
+                widget.activeColor ?? Theme.of(context).toggleableActiveColor,
+            tristate: widget.tristate,
+            disabled: widget.disabled != null &&
+                widget.disabled.contains(widget.options.elementAt(index).value),
+          )
+      ],
+    );
 
     return ListView.builder(
         scrollDirection:

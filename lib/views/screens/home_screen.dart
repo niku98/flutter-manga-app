@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
+import 'package:manga_app/domain/models/manga.dart';
+import 'package:manga_app/views/components/manga_section_list.dart';
 import 'package:manga_app/views/screens/filter_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,7 +14,50 @@ class HomeScreen extends StatelessWidget {
         statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
-      body: Column(children: [HomeHeader()]),
+      backgroundColor: Colors.white,
+      body: Column(children: [
+        HomeHeader(),
+        Container(
+          child: MangaSectionList(title: "Recommended", mangas: [
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+            Manga(
+                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
+                thumb:
+                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
+          ]),
+        )
+      ]),
     );
   }
 }

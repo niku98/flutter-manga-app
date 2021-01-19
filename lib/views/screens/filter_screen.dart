@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:manga_app/blocs/genre_list/genre_list_bloc.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
-import 'package:manga_app/domain/enums/checkbox_group_orientation.dart';
-import 'package:manga_app/domain/models/option.dart';
-import 'package:manga_app/views/components/checkbox_group.dart';
+import 'package:manga_app/views/screens/advanced_filter_screen.dart';
 
 class FilterScreen extends StatefulWidget {
   @override
@@ -13,21 +9,9 @@ class FilterScreen extends StatefulWidget {
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-  GenreListBloc _genreListBloc;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _genreListBloc = new GenreListBloc();
-    _genreListBloc.add(GetGenreList());
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _genreListBloc.close();
-    super.dispose();
+  getGenresFiltered() async {
+    final genresFiltered = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => AdvancedFilterScreen()));
   }
 
   @override
@@ -42,19 +26,12 @@ class _FilterScreenState extends State<FilterScreen> {
                 padding: EdgeInsets.symmetric(horizontal: Sizes.dimen_10.w),
                 child: Row(
                   children: [
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: Sizes.dimen_4.w),
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: Sizes.dimen_24.w,
-                            color: Colors.black,
-                          ),
-                        )),
+                    BackButton(
+                      color: Colors.black,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                     Icon(
                       Icons.search,
                       size: Sizes.dimen_24.w,
@@ -79,36 +56,10 @@ class _FilterScreenState extends State<FilterScreen> {
                           Icons.filter_alt,
                           color: Colors.black,
                         ),
-                        onPressed: null)
+                        onPressed: getGenresFiltered)
                   ],
                 ),
               )),
-          Container(
-              color: Colors.white,
-              height: 50,
-              width: double.infinity,
-              child: BlocProvider<GenreListBloc>.value(
-                value: _genreListBloc,
-                child: BlocBuilder<GenreListBloc, GenreListState>(
-                  builder: (context, state) {
-                    if (state is GotGenreList) {
-                      final options = state.genres
-                          .map((e) =>
-                              Option(label: e.genreName, value: e.endpoint))
-                          .toList();
-                      return CheckboxGroup(
-                        options: options,
-                        orientation: CheckboxGroupOrientation.HORIZONTAL,
-                        onChange: (selected) {
-                          print(selected);
-                        },
-                      );
-                    }
-
-                    return SizedBox.shrink();
-                  },
-                ),
-              ))
         ]),
       ),
     );
