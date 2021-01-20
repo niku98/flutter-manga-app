@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_statusbar_manager/flutter_statusbar_manager.dart';
 import 'package:manga_app/blocs/language/language_bloc.dart';
 import 'package:manga_app/common/constants/languages.dart';
 import 'package:manga_app/common/localization.dart';
@@ -21,6 +22,8 @@ class _MangaAppState extends State<MangaApp> {
   @override
   void initState() {
     super.initState();
+    FlutterStatusbarManager.setStyle(StatusBarStyle.DARK_CONTENT);
+    FlutterStatusbarManager.setColor(Colors.white, animated: true);
     _languageBloc = getItInstance<LanguageBloc>();
   }
 

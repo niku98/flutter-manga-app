@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manga_app/domain/enums/checkbox_group_orientation.dart';
 import 'package:manga_app/domain/models/option.dart';
-import 'package:manga_app/views/components/app_checkbox.dart';
+import 'package:manga_app/views/widgets/app_checkbox.dart';
 import 'package:manga_app/views/themes/app_color.dart';
 
 class CheckboxGroup extends StatefulWidget {

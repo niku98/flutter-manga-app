@@ -25,8 +25,18 @@ class MangaRepository {
     return GetRecommendedMangaResponse.fromJson(response).mangaList;
   }
 
+  Future<List<Manga>> getManhua() async {
+    final response = await ApiClient().get('manhua/1');
+    return GetRecommendedMangaResponse.fromJson(response).mangaList;
+  }
+
+  Future<List<Manga>> getManhwa() async {
+    final response = await ApiClient().get('manhwa/1');
+    return GetRecommendedMangaResponse.fromJson(response).mangaList;
+  }
+
   Future<MangaDetail> getDetail(String endpoint) async {
-    final response = await ApiClient().get('manga/detail' + endpoint);
+    final response = await ApiClient().get('manga/detail/' + endpoint);
 
     return MangaDetail.fromJson(response);
   }

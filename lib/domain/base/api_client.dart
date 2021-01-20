@@ -20,8 +20,10 @@ class ApiClient {
 
   Future<dynamic> get(String url) async {
     final finalUrl = 'https://mangamint.kaedenoki.net/api/' + url;
-    print(finalUrl);
+    print('Reqesting: ' + finalUrl);
     final Response response = await http.get(finalUrl);
+    print('Reqest response:');
+    print(response.body);
     return json.decode(response.body);
   }
 }

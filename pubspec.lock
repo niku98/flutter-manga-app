@@ -158,6 +158,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_statusbar_manager:
+    dependency: "direct main"
+    description:
+      name: flutter_statusbar_manager
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -324,6 +331,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.25.0"
+  skeleton_text:
+    dependency: "direct main"
+    description:
+      name: skeleton_text
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   sky_engine:
     dependency: transitive
     description: flutter

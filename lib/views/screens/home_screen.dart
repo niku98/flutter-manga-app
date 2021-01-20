@@ -1,63 +1,126 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:manga_app/blocs/manhua_manga/manhua_manga_bloc.dart';
+import 'package:manga_app/blocs/manhwa_manga/manhwa_manga_bloc.dart';
+import 'package:manga_app/blocs/recommended_manga/recommended_manga_bloc.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
-import 'package:manga_app/domain/models/manga.dart';
-import 'package:manga_app/views/components/manga_section_list.dart';
+import 'package:manga_app/views/widgets/bottom_tab_bar.dart';
+import 'package:manga_app/views/widgets/manga_section_list.dart';
 import 'package:manga_app/views/screens/filter_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  RecommendedMangaBloc _recommendedMangaBloc;
+  ManhuaMangaBloc _manhuaMangaBloc;
+  ManhwaMangaBloc _manhwaMangaBloc;
+  Completer<void> _refreshCompleter;
+
+  bool recommendRefreshing = false;
+  bool manhuaRefreshing = false;
+  bool manhwaRefreshing = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _recommendedMangaBloc = new RecommendedMangaBloc();
+    _manhuaMangaBloc = new ManhuaMangaBloc();
+    _manhwaMangaBloc = new ManhwaMangaBloc();
+    _refreshCompleter = new Completer();
+
+    _recommendedMangaBloc.listen((state) {
+      if (state is GotRecommendedManga) {
+        setState(() {
+          recommendRefreshing = false;
+          if (!manhuaRefreshing && !manhwaRefreshing) {
+            print('Refresh done');
+            _refreshCompleter?.complete();
+            _refreshCompleter = Completer();
+          }
+        });
+      }
+    });
+    _manhuaMangaBloc.listen((state) {
+      if (state is GotManhuaManga) {
+        setState(() {
+          manhuaRefreshing = false;
+          if (!recommendRefreshing && !manhwaRefreshing) {
+            print('Refresh done');
+            _refreshCompleter?.complete();
+            _refreshCompleter = Completer();
+          }
+        });
+      }
+    });
+
+    _manhwaMangaBloc.listen((state) {
+      if (state is GotManhwaManga) {
+        setState(() {
+          manhwaRefreshing = false;
+          if (!manhuaRefreshing && !recommendRefreshing) {
+            print('Refresh done');
+            _refreshCompleter?.complete();
+            _refreshCompleter = Completer();
+          }
+        });
+      }
+    });
+
+    loadData();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _recommendedMangaBloc.close();
+    _manhuaMangaBloc.close();
+    _manhwaMangaBloc.close();
+    super.dispose();
+  }
+
+  loadData() {
+    recommendRefreshing = true;
+    manhuaRefreshing = true;
+    manhwaRefreshing = true;
+
+    _recommendedMangaBloc.add(new GetRecommendedManga());
+    _manhuaMangaBloc.add(new GetManhuaManga());
+    _manhwaMangaBloc.add(new GetManhwaManga());
+  }
+
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.dark));
+    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    //     statusBarColor: Colors.transparent,
+    //     statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(children: [
-        HomeHeader(),
-        Container(
-          child: MangaSectionList(title: "Recommended", mangas: [
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-            Manga(
-                title: "Jimina Ken Sei Wa Sore Demo Saikyoudesu",
-                thumb:
-                    "https://i0.wp.com/komiku.co.id/wp-content/uploads/Manga-Jimina-Ken-Sei-Wa-Sore-Demo-Saikyoudesu.jpg?resize=450,235&quality=60"),
-          ]),
-        )
-      ]),
+      body: MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: _recommendedMangaBloc),
+            BlocProvider.value(value: _manhuaMangaBloc),
+            BlocProvider.value(value: _manhwaMangaBloc),
+          ],
+          child: RefreshIndicator(
+              child: ListView(children: [
+                HomeHeader(),
+                RecommendedMangaSection(),
+                ManhuaSection(),
+                ManhwaSection()
+              ]),
+              onRefresh: () {
+                loadData();
+                return _refreshCompleter.future;
+              })),
+      bottomNavigationBar: BottomTabBar(),
     );
   }
 }
@@ -77,20 +140,23 @@ class HomeHeader extends StatelessWidget {
           left: Sizes.dimen_14.w,
           right: Sizes.dimen_14.w),
       child: Column(children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Wellcome back",
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            IconButton(
-                icon: Icon(
-                  Icons.filter_alt,
-                  color: Colors.black,
-                ),
-                onPressed: null)
-          ],
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: Sizes.dimen_14.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Wellcome back",
+                style: Theme.of(context).textTheme.headline5,
+              ),
+              // IconButton(
+              //     icon: Icon(
+              //       Icons.filter_alt,
+              //       color: Colors.black,
+              //     ),
+              //     onPressed: null)
+            ],
+          ),
         ),
         GestureDetector(
           onTap: () {
@@ -134,5 +200,69 @@ class HomeHeader extends StatelessWidget {
         )
       ]),
     ));
+  }
+}
+
+class RecommendedMangaSection extends StatefulWidget {
+  @override
+  _RecommendedMangaSectionState createState() =>
+      _RecommendedMangaSectionState();
+}
+
+class _RecommendedMangaSectionState extends State<RecommendedMangaSection> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<RecommendedMangaBloc, RecommendedMangaState>(
+        builder: (context, state) {
+      if (state is GotRecommendedManga) {
+        return Container(
+          child: MangaSectionList(title: "Recommended", mangas: state.mangas),
+        );
+      }
+
+      return MangaSectionListLoader();
+    });
+  }
+}
+
+class ManhuaSection extends StatefulWidget {
+  @override
+  _ManhuaSectionState createState() => _ManhuaSectionState();
+}
+
+class _ManhuaSectionState extends State<ManhuaSection> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ManhuaMangaBloc, ManhuaMangaState>(
+        builder: (context, state) {
+      if (state is GotManhuaManga) {
+        return Container(
+          child: MangaSectionList(title: "Manhua", mangas: state.mangas),
+        );
+      }
+
+      return MangaSectionListLoader();
+    });
+  }
+}
+
+class ManhwaSection extends StatefulWidget {
+  @override
+  _ManhwaSectionState createState() => _ManhwaSectionState();
+}
+
+class _ManhwaSectionState extends State<ManhwaSection> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ManhwaMangaBloc, ManhwaMangaState>(
+        builder: (context, state) {
+      if (state is GotManhwaManga) {
+        return Container(
+          child: MangaSectionList(title: "Manhwa", mangas: state.mangas),
+        );
+      }
+
+      return MangaSectionListLoader();
+    });
   }
 }

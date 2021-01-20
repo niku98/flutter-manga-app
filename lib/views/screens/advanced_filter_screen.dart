@@ -4,7 +4,7 @@ import 'package:manga_app/blocs/genre_list/genre_list_bloc.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/domain/enums/checkbox_group_orientation.dart';
 import 'package:manga_app/domain/models/option.dart';
-import 'package:manga_app/views/components/checkbox_group.dart';
+import 'package:manga_app/views/widgets/checkbox_group.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
 import 'package:manga_app/views/themes/app_color.dart';
 
