@@ -76,6 +76,9 @@ class _MangaAppState extends State<MangaApp> {
                     textTheme: AppText.getTextTheme(),
                   ),
                   home: HomeScreen(),
+                  routes: {
+                    'home': (context) => HomeScreen(),
+                  },
                 ));
           }
           return SizedBox.shrink();

@@ -22,10 +22,7 @@ class MangaSectionList extends StatelessWidget {
               vertical: Sizes.dimen_10.w, horizontal: Sizes.dimen_14.w),
           child: Text(
             title,
-            style: Theme.of(context)
-                .textTheme
-                .headline5
-                .copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.headline6,
           ),
         ),
         Container(

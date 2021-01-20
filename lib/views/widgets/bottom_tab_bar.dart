@@ -1,13 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:manga_app/views/screens/home_screen.dart';
 import 'package:manga_app/views/themes/app_color.dart';
 
 class BottomTabBar extends StatefulWidget {
   final TabController controller;
+  final int initialIndex;
 
-  const BottomTabBar({this.controller});
+  const BottomTabBar({this.controller, this.initialIndex = 0});
 
   @override
   _BottomTabBarState createState() => _BottomTabBarState();
@@ -15,8 +13,8 @@ class BottomTabBar extends StatefulWidget {
 
 class _BottomTabBarState extends State<BottomTabBar>
     with SingleTickerProviderStateMixin {
-  final indexToScreens = <Widget>[
-    HomeScreen(),
+  final indexToScreens = <String>[
+    'home',
   ];
   final List<Tab> tabs = [
     Tab(
@@ -47,7 +45,10 @@ class _BottomTabBarState extends State<BottomTabBar>
     super.initState();
     _tabController = widget.controller != null
         ? widget.controller
-        : TabController(length: tabs.length, vsync: this);
+        : TabController(
+            length: tabs.length,
+            vsync: this,
+            initialIndex: widget.initialIndex);
   }
 
   @override
@@ -71,9 +72,11 @@ class _BottomTabBarState extends State<BottomTabBar>
         controller: _tabController,
         tabs: tabs,
         onTap: (index) {
-          if (indexToScreens[index] != null) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => indexToScreens[index]));
+          final String currentRouteName = ModalRoute.of(context).settings.name;
+
+          if (indexToScreens[index] != null &&
+              indexToScreens[index] != currentRouteName) {
+            Navigator.pushNamed(context, indexToScreens[index]);
           }
         },
         labelColor: AppColors.primary,

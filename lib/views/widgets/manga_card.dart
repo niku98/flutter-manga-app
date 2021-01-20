@@ -6,6 +6,7 @@ import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
 import 'package:manga_app/domain/models/manga.dart';
 import 'package:manga_app/views/screens/manga_detail_screen.dart';
+import 'package:manga_app/views/widgets/cache_image_with_skeleton.dart';
 import 'package:manga_app/views/widgets/skeleton_box.dart';
 
 class MangaCard extends StatelessWidget {
@@ -30,8 +31,8 @@ class MangaCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(Sizes.dimen_10.w),
                 child: Hero(
                   tag: manga,
-                  child: CachedNetworkImage(
-                    imageUrl: manga.thumb,
+                  child: CacheImageWithSkeleton(
+                    manga.thumb,
                     width: Sizes.dimen_140.w,
                     height: Sizes.dimen_100.w * 2,
                     fit: BoxFit.cover,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
 import 'package:manga_app/domain/models/manga.dart';
 import 'package:manga_app/views/screens/manga_reader_screen.dart';
+import 'package:manga_app/views/widgets/cache_image_with_skeleton.dart';
 import 'package:manga_app/views/widgets/manga_genre_tag_list.dart';
 import 'package:manga_app/views/widgets/paragraph_loader.dart';
 import 'package:manga_app/views/widgets/skeleton_box.dart';
@@ -22,6 +25,7 @@ class MangaDetailScreen extends StatefulWidget {
 
 class _MangaDetailScreenState extends State<MangaDetailScreen> {
   MangaDetailBloc _mangaDetailBloc;
+  Completer refreshMangaCompleter = Completer();
 
   @override
   void initState() {
@@ -31,7 +35,13 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
     FlutterStatusbarManager.setTranslucent(true);
 
     _mangaDetailBloc = MangaDetailBloc();
-    _mangaDetailBloc.add(GetMangaDetail(widget.manga.endpoint));
+    _mangaDetailBloc.listen((state) {
+      if (state is GotMangaDetail) {
+        refreshMangaCompleter.complete();
+        refreshMangaCompleter = Completer();
+      }
+    });
+    loadManga();
   }
 
   @override
@@ -41,6 +51,10 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
     FlutterStatusbarManager.setStyle(StatusBarStyle.DARK_CONTENT);
     FlutterStatusbarManager.setColor(Colors.white, animated: true);
     super.dispose();
+  }
+
+  loadManga() {
+    _mangaDetailBloc.add(GetMangaDetail(widget.manga.endpoint));
   }
 
   @override
@@ -54,24 +68,24 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
           if (state is GotMangaDetail) {
             chapterLength = state.manga.chapter?.length ?? 0;
           }
-          return ListView(children: [
-            Hero(
-                tag: widget.manga,
-                flightShuttleBuilder: (BuildContext flightContext,
-                        Animation<double> animation,
-                        HeroFlightDirection flightDirection,
-                        BuildContext fromHeroContext,
-                        BuildContext toHeroContext) =>
-                    Material(child: toHeroContext.widget),
-                child: Container(
+          return RefreshIndicator(
+              child: ListView(children: [
+                Container(
                   height: Sizes.dimen_76.h,
                   child: Stack(overflow: Overflow.clip, children: [
                     Stack(children: [
-                      CachedNetworkImage(
-                        height: Sizes.dimen_76.h,
-                        fit: BoxFit.cover,
-                        imageUrl: widget.manga.thumb,
-                      ),
+                      Hero(
+                          tag: widget.manga,
+                          flightShuttleBuilder: (BuildContext flightContext,
+                                  Animation<double> animation,
+                                  HeroFlightDirection flightDirection,
+                                  BuildContext fromHeroContext,
+                                  BuildContext toHeroContext) =>
+                              Material(child: toHeroContext.widget),
+                          child: CacheImageWithSkeleton(
+                            widget.manga.thumb,
+                            height: Sizes.dimen_76.h,
+                          )),
                       Container(
                         height: Sizes.dimen_76.h,
                         width: double.infinity,
@@ -152,126 +166,93 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                       bottom: Sizes.dimen_76.h / 2,
                     )
                   ]),
-                )),
-            Padding(
-              padding: EdgeInsets.all(Sizes.dimen_14.w),
-              child: state is GotMangaDetail
-                  ? MangaGenreTagList(
-                      state.manga.genreList.map((e) => e.genreName).toList())
-                  : MangaGenreTagListLoader(),
-            ),
-            Padding(
-                padding: EdgeInsets.all(Sizes.dimen_14.w),
-                child: state is GotMangaDetail
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Description",
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                          Text(
-                            state.manga.synopsis,
-                            style: Theme.of(context).textTheme.bodyText2,
+                ),
+                Padding(
+                  padding: EdgeInsets.all(Sizes.dimen_14.w),
+                  child: state is GotMangaDetail
+                      ? MangaGenreTagList(state.manga.genreList
+                          .map((e) => e.genreName)
+                          .toList())
+                      : MangaGenreTagListLoader(),
+                ),
+                Padding(
+                    padding: EdgeInsets.all(Sizes.dimen_14.w),
+                    child: state is GotMangaDetail
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Description",
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                              Text(
+                                state.manga.synopsis,
+                                style: Theme.of(context).textTheme.bodyText2,
+                              )
+                            ],
                           )
-                        ],
-                      )
-                    : ParagraphLoader()),
-            Padding(
-              padding: EdgeInsets.all(Sizes.dimen_14.w),
-              child: Text(
-                "Chapters",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(Sizes.dimen_14.w),
-              child: state is GotMangaDetail
-                  ? Column(
-                      children: [
-                        for (var i = 0; i < chapterLength; i++)
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MangaReaderScreen(
-                                            manga: state.manga,
-                                            chapter: state.manga.chapter[i],
-                                          )));
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  border: i == 0
-                                      ? null
-                                      : Border(
-                                          top: BorderSide(
-                                              color: Colors.grey[100]))),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: Sizes.dimen_6.h,
-                                  horizontal: Sizes.dimen_14.w),
-                              width: double.infinity,
-                              child: Text(state.manga.chapter[i].chapterTitle),
+                        : ParagraphLoader()),
+                Padding(
+                  padding: EdgeInsets.all(Sizes.dimen_14.w),
+                  child: state is GotMangaDetail
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Chapters",
+                              style: Theme.of(context).textTheme.headline6,
                             ),
-                          )
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        for (var i = 0; i < 10; i++)
-                          Padding(
-                            padding:
-                                EdgeInsets.symmetric(vertical: Sizes.dimen_1.h),
-                            child: SkeletonBox(
-                              width: double.infinity,
-                              height: Sizes.dimen_14.h,
-                            ),
-                          )
-                      ],
-                    ),
-            ),
-          ]);
+                            for (var i = 0; i < chapterLength; i++)
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              MangaReaderScreen(
+                                                manga: state.manga,
+                                                chapterIndex: i,
+                                              )));
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      border: i == 0
+                                          ? null
+                                          : Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey[100]))),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: Sizes.dimen_6.h,
+                                      horizontal: Sizes.dimen_14.w),
+                                  width: double.infinity,
+                                  child:
+                                      Text(state.manga.chapter[i].chapterTitle),
+                                ),
+                              )
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            for (var i = 0; i < 10; i++)
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: Sizes.dimen_1.h),
+                                child: SkeletonBox(
+                                  width: double.infinity,
+                                  height: Sizes.dimen_14.h,
+                                ),
+                              )
+                          ],
+                        ),
+                ),
+              ]),
+              onRefresh: () {
+                loadManga();
+
+                return refreshMangaCompleter.future;
+              });
         }),
       ),
     );
   }
 }
-
-// class TopImageClipper extends CustomClipper<Path> {
-//   @override
-//   Path getClip(Size size) {
-//     Path path = Path();
-//     path.moveTo(0, 0);
-//     path.lineTo(size.width, 0);
-//     path.lineTo(size.width, size.height);
-
-//     var controlPoint1 =
-//         Offset(size.width - size.width / 3, size.height - size.height / 5);
-//     var controlPoint2 = Offset(size.width / 2, size.height);
-//     var endPoint = Offset(size.width / 3, size.height - 5);
-
-//     path.cubicTo(controlPoint1.dx, controlPoint1.dy, controlPoint2.dx,
-//         controlPoint2.dy, endPoint.dx, endPoint.dy);
-
-//     controlPoint1 = Offset(size.width / 5, size.height - 10);
-//     endPoint = Offset(size.width / 5, size.height - size.height / 3);
-//     path.quadraticBezierTo(
-//         controlPoint1.dx, controlPoint1.dy, endPoint.dx, endPoint.dy);
-
-//     controlPoint1 = Offset(size.width / 5, size.height - 50);
-//     controlPoint2 = Offset(size.width / 5, size.height / 4);
-//     endPoint = Offset(0, size.height / 3);
-
-//     path.cubicTo(controlPoint1.dx, controlPoint1.dy, controlPoint2.dx,
-//         controlPoint2.dy, endPoint.dx, endPoint.dy);
-
-//     path.close();
-//     return path;
-//   }
-
-//   @override
-//   bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-//     // TODO: implement shouldReclip
-//     return false;
-//   }
-// }
