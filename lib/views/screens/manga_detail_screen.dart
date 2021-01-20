@@ -6,6 +6,7 @@ import 'package:manga_app/blocs/manga_detail/manga_detail_bloc.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
 import 'package:manga_app/domain/models/manga.dart';
+import 'package:manga_app/views/screens/manga_reader_screen.dart';
 import 'package:manga_app/views/widgets/manga_genre_tag_list.dart';
 import 'package:manga_app/views/widgets/paragraph_loader.dart';
 import 'package:manga_app/views/widgets/skeleton_box.dart';
@@ -49,6 +50,10 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
         value: _mangaDetailBloc,
         child: BlocBuilder<MangaDetailBloc, MangaDetailState>(
             builder: (context, state) {
+          int chapterLength = 0;
+          if (state is GotMangaDetail) {
+            chapterLength = state.manga.chapter?.length ?? 0;
+          }
           return ListView(children: [
             Hero(
                 tag: widget.manga,
@@ -101,18 +106,21 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   state is GotMangaDetail
-                                      ? RichText(
-                                          text: TextSpan(children: [
-                                          TextSpan(
-                                              text: "Author: ",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          TextSpan(
-                                            text: state.manga.author != ""
-                                                ? state.manga.author
-                                                : "Updating",
-                                          ),
-                                        ]))
+                                      ? Flexible(
+                                          child: RichText(
+                                              overflow: TextOverflow.ellipsis,
+                                              text: TextSpan(children: [
+                                                TextSpan(
+                                                    text: "Author: ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                TextSpan(
+                                                  text: state.manga.author != ""
+                                                      ? state.manga.author
+                                                      : "Updating",
+                                                ),
+                                              ])))
                                       : SkeletonBox(
                                           width: Sizes.dimen_100.w,
                                           height: Sizes.dimen_6.h),
@@ -141,7 +149,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                       child: BackButton(
                         color: Colors.white,
                       ),
-                      top: Sizes.dimen_10.h,
+                      bottom: Sizes.dimen_76.h / 2,
                     )
                   ]),
                 )),
@@ -181,11 +189,46 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
               child: state is GotMangaDetail
                   ? Column(
                       children: [
-                        for (var chapter in state.manga.chapter)
-                          ListTile(title: Text(chapter.chapterTitle))
+                        for (var i = 0; i < chapterLength; i++)
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MangaReaderScreen(
+                                            manga: state.manga,
+                                            chapter: state.manga.chapter[i],
+                                          )));
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: i == 0
+                                      ? null
+                                      : Border(
+                                          top: BorderSide(
+                                              color: Colors.grey[100]))),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: Sizes.dimen_6.h,
+                                  horizontal: Sizes.dimen_14.w),
+                              width: double.infinity,
+                              child: Text(state.manga.chapter[i].chapterTitle),
+                            ),
+                          )
                       ],
                     )
-                  : SizedBox.shrink(),
+                  : Column(
+                      children: [
+                        for (var i = 0; i < 10; i++)
+                          Padding(
+                            padding:
+                                EdgeInsets.symmetric(vertical: Sizes.dimen_1.h),
+                            child: SkeletonBox(
+                              width: double.infinity,
+                              height: Sizes.dimen_14.h,
+                            ),
+                          )
+                      ],
+                    ),
             ),
           ]);
         }),

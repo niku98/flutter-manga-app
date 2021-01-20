@@ -1,4 +1,5 @@
 import 'package:manga_app/domain/base/api_client.dart';
+import 'package:manga_app/domain/models/chapter.dart';
 import 'package:manga_app/domain/models/manga.dart';
 import 'package:manga_app/domain/models/responses/get_all_manga_response.dart';
 import 'package:manga_app/domain/models/responses/get_recommended_manga_response.dart';
@@ -39,5 +40,11 @@ class MangaRepository {
     final response = await ApiClient().get('manga/detail/' + endpoint);
 
     return MangaDetail.fromJson(response);
+  }
+
+  Future<ChapterDetail> getChapter(String endpoint) async {
+    final response = await ApiClient().get('chapter/' + endpoint);
+
+    return ChapterDetail.fromJson(response);
   }
 }

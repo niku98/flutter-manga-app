@@ -43,10 +43,8 @@ class MangaCard extends StatelessWidget {
               child: Text(
                 manga.title,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    .copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodyText2.copyWith(
+                    fontSize: Sizes.dimen_16.sp, fontWeight: FontWeight.bold),
               ),
             )
           ],
