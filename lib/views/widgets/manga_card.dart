@@ -17,6 +17,7 @@ class MangaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(Sizes.dimen_10.w),
       onTap: () {
         Navigator.push(
             context,

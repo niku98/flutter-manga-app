@@ -82,3 +82,32 @@ class MangaDetail {
     }
   }
 }
+
+class MangaFromSearch {
+  String title;
+  String thumb;
+  String type;
+  String endpoint;
+  String updatedOn;
+
+  MangaFromSearch(
+      {this.title, this.thumb, this.type, this.endpoint, this.updatedOn});
+
+  MangaFromSearch.fromJson(Map<String, dynamic> json) {
+    title = json['title'];
+    thumb = json['thumb'];
+    type = json['type'];
+    endpoint = json['endpoint'];
+    updatedOn = json['updated_on'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['title'] = this.title;
+    data['thumb'] = this.thumb;
+    data['type'] = this.type;
+    data['endpoint'] = this.endpoint;
+    data['updated_on'] = this.updatedOn;
+    return data;
+  }
+}

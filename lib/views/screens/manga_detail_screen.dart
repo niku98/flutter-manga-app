@@ -12,6 +12,7 @@ import 'package:manga_app/views/screens/manga_reader_screen.dart';
 import 'package:manga_app/views/widgets/cache_image_with_skeleton.dart';
 import 'package:manga_app/views/widgets/manga_genre_tag_list.dart';
 import 'package:manga_app/views/widgets/paragraph_loader.dart';
+import 'package:manga_app/views/widgets/section.dart';
 import 'package:manga_app/views/widgets/skeleton_box.dart';
 
 class MangaDetailScreen extends StatefulWidget {
@@ -167,41 +168,30 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                     )
                   ]),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(Sizes.dimen_14.w),
+                Section(
+                  contentPadding: EdgeInsets.all(Sizes.dimen_14.w),
+                  margin: EdgeInsets.all(0),
                   child: state is GotMangaDetail
                       ? MangaGenreTagList(state.manga.genreList
                           .map((e) => e.genreName)
                           .toList())
                       : MangaGenreTagListLoader(),
                 ),
-                Padding(
-                    padding: EdgeInsets.all(Sizes.dimen_14.w),
-                    child: state is GotMangaDetail
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Description",
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                              Text(
-                                state.manga.synopsis,
-                                style: Theme.of(context).textTheme.bodyText2,
-                              )
-                            ],
-                          )
-                        : ParagraphLoader()),
-                Padding(
-                  padding: EdgeInsets.all(Sizes.dimen_14.w),
+                Section(
+                  title: "Description",
+                  child: state is GotMangaDetail
+                      ? Text(
+                          state.manga.synopsis,
+                          style: Theme.of(context).textTheme.bodyText2,
+                        )
+                      : ParagraphLoader(),
+                ),
+                Section(
+                  title: "Chapters",
                   child: state is GotMangaDetail
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Chapters",
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
                             for (var i = 0; i < chapterLength; i++)
                               InkWell(
                                 onTap: () {

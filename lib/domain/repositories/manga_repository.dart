@@ -3,6 +3,7 @@ import 'package:manga_app/domain/models/chapter.dart';
 import 'package:manga_app/domain/models/manga.dart';
 import 'package:manga_app/domain/models/responses/get_all_manga_response.dart';
 import 'package:manga_app/domain/models/responses/get_recommended_manga_response.dart';
+import 'package:manga_app/domain/models/responses/search_manga_response.dart';
 
 class MangaRepository {
   static MangaRepository _instance;
@@ -19,6 +20,11 @@ class MangaRepository {
   Future<List<Manga>> getAll({int page = 1}) async {
     final response = await ApiClient().get('manga/page/' + page.toString());
     return GetAllMangaResponse.fromJson(response).mangaList;
+  }
+
+  Future<List<MangaFromSearch>> search(String query) async {
+    final response = await ApiClient().get('search/' + query);
+    return SearchMangaResponse.fromJson(response).mangaList;
   }
 
   Future<List<Manga>> getRecommened() async {

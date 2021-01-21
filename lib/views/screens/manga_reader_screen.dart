@@ -167,11 +167,18 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        widget.manga.title,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6,
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                70,
+                                        child: Text(
+                                          widget.manga.title,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6,
+                                        ),
                                       ),
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton(

@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:manga_app/blocs/search_manga/search_manga_bloc.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
 import 'package:manga_app/views/screens/advanced_filter_screen.dart';
+import 'package:manga_app/views/widgets/manga_horizontal_card.dart';
 
 class FilterScreen extends StatefulWidget {
   @override
@@ -9,48 +14,115 @@ class FilterScreen extends StatefulWidget {
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-  getGenresFiltered() async {
-    final genresFiltered = await Navigator.push(context,
-        MaterialPageRoute(builder: (context) => AdvancedFilterScreen()));
+  SearchMangaBloc searchMangaBloc;
+  Completer refreshCompleter;
+  final TextEditingController searchFieldController = TextEditingController();
+  Timer debounce;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    searchMangaBloc = SearchMangaBloc();
+    refreshCompleter = Completer();
+    searchFieldController.addListener(onSearch);
+    searchMangaBloc.listen((state) {
+      if (state is SearchMangaLoaded) {
+        refreshCompleter.complete();
+        refreshCompleter = Completer();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    searchFieldController.dispose();
+    searchMangaBloc.close();
+    super.dispose();
+  }
+
+  onSearch() {
+    if (debounce?.isActive ?? false) {
+      debounce.cancel();
+    }
+
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      searchManga();
+    });
+  }
+
+  searchManga() {
+    if (searchFieldController.text != "") {
+      searchMangaBloc.add(SearchManga(searchFieldController.text));
+    } else {
+      refreshCompleter.complete();
+      refreshCompleter = Completer();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          color: Colors.black,
-        ),
-        leadingWidth: Sizes.dimen_24.w,
-        backgroundColor: Colors.white,
-        title: Hero(
-            tag: "search_bar",
-            child: Container(
-              child: Row(children: [
-                Icon(
-                  Icons.search,
-                  size: Sizes.dimen_24.w,
-                  color: Colors.grey,
+    return SafeArea(
+      child: BlocProvider.value(
+        value: searchMangaBloc,
+        child: RefreshIndicator(
+          onRefresh: () {
+            searchManga();
+            return refreshCompleter.future;
+          },
+          child: Scaffold(
+              appBar: AppBar(
+                leading: BackButton(
+                  color: Colors.black,
                 ),
-                Expanded(
-                    child: TextField(
-                        autofocus: true,
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: Sizes.dimen_4.w,
-                            ))))
-              ]),
-            )),
-      ),
-      body: SafeArea(
-        child: ListView(children: []),
+                leadingWidth: Sizes.dimen_24.w,
+                backgroundColor: Colors.white,
+                elevation: 3,
+                shadowColor: Colors.black12,
+                title: Hero(
+                    tag: "search_bar",
+                    child: Container(
+                      child: Row(children: [
+                        Icon(
+                          Icons.search,
+                          size: Sizes.dimen_24.w,
+                          color: Colors.grey,
+                        ),
+                        Expanded(
+                            child: TextField(
+                                controller: searchFieldController,
+                                autofocus: true,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                    hintText: 'Search',
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: Sizes.dimen_4.w,
+                                    ))))
+                      ]),
+                    )),
+              ),
+              body: BlocBuilder<SearchMangaBloc, SearchMangaState>(
+                builder: (context, state) {
+                  return ListView.separated(
+                      padding: EdgeInsets.all(Sizes.dimen_14.w),
+                      itemBuilder: (context, index) {
+                        return MangaHorizontalCard();
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: Sizes.dimen_4.h,
+                        );
+                      },
+                      itemCount: 3);
+                },
+              )),
+        ),
       ),
     );
   }

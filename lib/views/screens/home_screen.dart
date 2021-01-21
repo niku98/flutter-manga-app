@@ -102,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
     //     statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _recommendedMangaBloc),
