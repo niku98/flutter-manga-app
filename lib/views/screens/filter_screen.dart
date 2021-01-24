@@ -17,6 +17,7 @@ class _FilterScreenState extends State<FilterScreen> {
   SearchMangaBloc searchMangaBloc;
   Completer refreshCompleter;
   final TextEditingController searchFieldController = TextEditingController();
+  String searchText;
   Timer debounce;
 
   @override
@@ -52,13 +53,23 @@ class _FilterScreenState extends State<FilterScreen> {
     });
   }
 
-  searchManga() {
-    if (searchFieldController.text != "") {
+  searchManga({bool isRefresh = false}) {
+    if ((searchFieldController.text != "" &&
+            searchFieldController.text != searchText) ||
+        isRefresh == true) {
+      setState(() {
+        searchText = searchFieldController.text;
+      });
+
       searchMangaBloc.add(SearchManga(searchFieldController.text));
     } else {
-      refreshCompleter.complete();
-      refreshCompleter = Completer();
+      Timer(Duration(milliseconds: 100), () {
+        refreshCompleter.complete();
+        refreshCompleter = Completer();
+      });
     }
+
+    return refreshCompleter.future;
   }
 
   @override
@@ -68,8 +79,7 @@ class _FilterScreenState extends State<FilterScreen> {
         value: searchMangaBloc,
         child: RefreshIndicator(
           onRefresh: () {
-            searchManga();
-            return refreshCompleter.future;
+            return searchManga(isRefresh: true);
           },
           child: Scaffold(
               appBar: AppBar(
@@ -109,17 +119,32 @@ class _FilterScreenState extends State<FilterScreen> {
               ),
               body: BlocBuilder<SearchMangaBloc, SearchMangaState>(
                 builder: (context, state) {
-                  return ListView.separated(
-                      padding: EdgeInsets.all(Sizes.dimen_14.w),
-                      itemBuilder: (context, index) {
-                        return MangaHorizontalCard();
-                      },
-                      separatorBuilder: (context, index) {
-                        return SizedBox(
-                          height: Sizes.dimen_4.h,
-                        );
-                      },
-                      itemCount: 3);
+                  if (state is SearchMangaLoaded) {
+                    return ListView.separated(
+                        padding: EdgeInsets.all(Sizes.dimen_14.w),
+                        itemBuilder: (context, index) {
+                          return MangaHorizontalCard(state.mangas[index]);
+                        },
+                        separatorBuilder: (context, index) {
+                          return SizedBox(
+                            height: Sizes.dimen_4.h,
+                          );
+                        },
+                        itemCount: state.mangas.length);
+                  } else if (state is SearchingManga) {
+                    return ListView.separated(
+                        padding: EdgeInsets.all(Sizes.dimen_14.w),
+                        itemBuilder: (context, index) {
+                          return MangaHorizontalCardLoader();
+                        },
+                        separatorBuilder: (context, index) {
+                          return SizedBox(
+                            height: Sizes.dimen_4.h,
+                          );
+                        },
+                        itemCount: 6);
+                  }
+                  return SizedBox.shrink();
                 },
               )),
         ),
