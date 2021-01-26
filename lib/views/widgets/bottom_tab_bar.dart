@@ -4,8 +4,14 @@ import 'package:manga_app/views/themes/app_color.dart';
 class BottomTabBar extends StatefulWidget {
   final TabController controller;
   final int initialIndex;
+  final List<Tab> tabs;
+  final Function(int) onTap;
 
-  const BottomTabBar({this.controller, this.initialIndex = 0});
+  const BottomTabBar(
+      {this.controller,
+      this.initialIndex = 0,
+      @required this.tabs,
+      this.onTap});
 
   @override
   _BottomTabBarState createState() => _BottomTabBarState();
@@ -13,30 +19,6 @@ class BottomTabBar extends StatefulWidget {
 
 class _BottomTabBarState extends State<BottomTabBar>
     with SingleTickerProviderStateMixin {
-  final indexToScreens = <String>[
-    'home',
-  ];
-  final List<Tab> tabs = [
-    Tab(
-        icon: Icon(
-      Icons.home_outlined,
-      // color: AppColors.dark,
-    )),
-    Tab(
-        icon: Icon(
-      Icons.layers_outlined,
-      // color: AppColors.dark,
-    )),
-    Tab(
-        icon: Icon(Icons.edit_sharp
-            // color: AppColors.dark,
-            )),
-    Tab(
-        icon: Icon(
-      Icons.person_outline,
-      // color: AppColors.dark,
-    )),
-  ];
   TabController _tabController;
 
   @override
@@ -46,7 +28,7 @@ class _BottomTabBarState extends State<BottomTabBar>
     _tabController = widget.controller != null
         ? widget.controller
         : TabController(
-            length: tabs.length,
+            length: widget.tabs.length,
             vsync: this,
             initialIndex: widget.initialIndex);
   }
@@ -70,15 +52,8 @@ class _BottomTabBarState extends State<BottomTabBar>
       ], color: Colors.white),
       child: TabBar(
         controller: _tabController,
-        tabs: tabs,
-        onTap: (index) {
-          final String currentRouteName = ModalRoute.of(context).settings.name;
-
-          if (indexToScreens[index] != null &&
-              indexToScreens[index] != currentRouteName) {
-            Navigator.pushNamed(context, indexToScreens[index]);
-          }
-        },
+        tabs: widget.tabs,
+        onTap: widget.onTap,
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.dark,
         indicatorSize: TabBarIndicatorSize.label,

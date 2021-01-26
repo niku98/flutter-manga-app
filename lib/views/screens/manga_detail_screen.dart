@@ -69,12 +69,16 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
           if (state is GotMangaDetail) {
             chapterLength = state.manga.chapter?.length ?? 0;
           }
+
+          final double width = MediaQuery.of(context).size.width;
+          final double height = MediaQuery.of(context).size.width / 2;
+
           return RefreshIndicator(
               child: ListView(children: [
                 Container(
-                  height: Sizes.dimen_76.h,
+                  height: height,
                   child: Stack(overflow: Overflow.clip, children: [
-                    Stack(children: [
+                    Stack(alignment: Alignment.center, children: [
                       Hero(
                           tag: widget.manga,
                           flightShuttleBuilder: (BuildContext flightContext,
@@ -85,10 +89,12 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                               Material(child: toHeroContext.widget),
                           child: CacheImageWithSkeleton(
                             widget.manga.thumb,
-                            height: Sizes.dimen_76.h,
+                            width: width,
+                            // height: Sizes.dimen_76.h,
+                            height: height,
                           )),
                       Container(
-                        height: Sizes.dimen_76.h,
+                        height: height,
                         width: double.infinity,
                         padding: EdgeInsets.only(
                             bottom: Sizes.dimen_6.h,
@@ -164,7 +170,7 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                       child: BackButton(
                         color: Colors.white,
                       ),
-                      bottom: Sizes.dimen_76.h / 2,
+                      bottom: height / 2,
                     )
                   ]),
                 ),
@@ -189,8 +195,8 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                 Section(
                   title: "Chapters",
                   child: state is GotMangaDetail
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      ? Wrap(
+                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             for (var i = 0; i < chapterLength; i++)
                               InkWell(

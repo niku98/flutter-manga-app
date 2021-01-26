@@ -11,21 +11,24 @@ import 'package:manga_app/views/widgets/skeleton_box.dart';
 
 class MangaCard extends StatelessWidget {
   final Manga manga;
+  final double width;
 
-  MangaCard(this.manga);
+  MangaCard(this.manga, {this.width});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(Sizes.dimen_10.w),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MangaDetailScreen(manga: manga)));
-      },
-      child: Container(
-        width: Sizes.dimen_140.w,
+    final width = this.width ?? Sizes.dimen_140.w;
+
+    return Container(
+      width: width,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(Sizes.dimen_10.w),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MangaDetailScreen(manga: manga)));
+        },
         child: Column(
           children: [
             ClipRRect(
@@ -34,8 +37,8 @@ class MangaCard extends StatelessWidget {
                   tag: manga,
                   child: CacheImageWithSkeleton(
                     manga.thumb,
-                    width: Sizes.dimen_140.w,
-                    height: Sizes.dimen_100.w * 2,
+                    width: width,
+                    height: width * 3 / 2,
                     fit: BoxFit.cover,
                   ),
                 )),
@@ -57,24 +60,28 @@ class MangaCard extends StatelessWidget {
 }
 
 class MangaCardLoader extends StatelessWidget {
+  final double width;
+  MangaCardLoader({this.width});
+
   @override
   Widget build(BuildContext context) {
+    final width = this.width ?? Sizes.dimen_140.w;
     return Container(
-      width: Sizes.dimen_140.w,
+      width: width,
       child: Column(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(Sizes.dimen_10.w),
             child: SkeletonBox(
-              width: Sizes.dimen_140.w,
-              height: Sizes.dimen_140.w * 2 - Sizes.dimen_14.w * 8,
+              width: width,
+              height: width * 3 / 2,
             ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: Sizes.dimen_6.w, vertical: Sizes.dimen_4.w),
             child: SkeletonBox(
-              width: Sizes.dimen_140.w - Sizes.dimen_14.w,
+              width: width - Sizes.dimen_14.w,
               height: Sizes.dimen_14.w,
             ),
           )

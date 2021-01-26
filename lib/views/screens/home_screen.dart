@@ -119,7 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 loadData();
                 return _refreshCompleter.future;
               })),
-      bottomNavigationBar: BottomTabBar(),
     );
   }
 }

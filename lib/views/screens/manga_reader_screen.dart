@@ -131,7 +131,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
                                     height: Sizes.dimen_1.h,
                                   );
                                 },
-                                itemCount: state.chapter.chapterPages)
+                                itemCount: state.chapter.chapterPages ?? 0)
                             : ListView.separated(
                                 itemBuilder: (context, index) {
                                   return SkeletonBox(

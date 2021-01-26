@@ -5,7 +5,9 @@ import 'package:manga_app/blocs/language/language_bloc.dart';
 import 'package:manga_app/common/constants/languages.dart';
 import 'package:manga_app/common/localization.dart';
 import 'package:manga_app/di/get_it.dart';
+import 'package:manga_app/views/screens/explorer_screen.dart';
 import 'package:manga_app/views/screens/home_screen.dart';
+import 'package:manga_app/views/screens/main_screen.dart';
 import 'package:manga_app/views/themes/app_color.dart';
 import 'package:manga_app/views/themes/text_theme.dart';
 
@@ -75,9 +77,10 @@ class _MangaAppState extends State<MangaApp> {
                     visualDensity: VisualDensity.adaptivePlatformDensity,
                     textTheme: AppText.getTextTheme(),
                   ),
-                  home: HomeScreen(),
+                  home: MainScreen(),
                   routes: {
                     'home': (context) => HomeScreen(),
+                    'explorer': (context) => ExplorerScreen(),
                   },
                 ));
           }

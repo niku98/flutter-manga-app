@@ -22,4 +22,11 @@ class GenreRepository {
     print(response);
     return GetGenreListResponse.fromJson(response).listGenre;
   }
+
+  Future<List<Manga>> getListManga(String endpoint,
+      {int pageNumber = 1}) async {
+    final response = await ApiClient().get('genres/$endpoint/$pageNumber');
+    print(response);
+    return GetRecommendedMangaResponse.fromJson(response).mangaList;
+  }
 }

@@ -29,7 +29,7 @@ class MangaSectionList extends StatelessWidget {
             );
           },
           itemCount: mangas.length),
-      contentHeight: Sizes.dimen_82.h,
+      contentHeight: Sizes.dimen_140.w * 3 / 2 + 40,
       contentPadding: EdgeInsets.symmetric(horizontal: 0),
     );
   }
