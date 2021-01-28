@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbar_manager/flutter_statusbar_manager.dart';
 import 'package:manga_app/blocs/manga_detail/manga_detail_bloc.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
+import 'package:manga_app/common/status_bar_util.dart';
 import 'package:manga_app/domain/models/manga.dart';
 import 'package:manga_app/views/screens/manga_reader_screen.dart';
 import 'package:manga_app/views/widgets/cache_image_with_skeleton.dart';
@@ -31,9 +31,9 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
   @override
   void initState() {
     super.initState();
-    FlutterStatusbarManager.setColor(Colors.black12, animated: true);
-    FlutterStatusbarManager.setStyle(StatusBarStyle.LIGHT_CONTENT);
-    FlutterStatusbarManager.setTranslucent(true);
+    StatusBarUtil.setColor(Colors.black12, animated: true);
+    StatusBarUtil.setStyle(StatusBarStyle.LIGHT_CONTENT);
+    StatusBarUtil.setTranslucent(true);
 
     _mangaDetailBloc = MangaDetailBloc();
     _mangaDetailBloc.listen((state) {
@@ -48,9 +48,9 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
   @override
   void dispose() {
     _mangaDetailBloc.close();
-    FlutterStatusbarManager.setTranslucent(false);
-    FlutterStatusbarManager.setStyle(StatusBarStyle.DARK_CONTENT);
-    FlutterStatusbarManager.setColor(Colors.white, animated: true);
+    StatusBarUtil.setTranslucent(false);
+    StatusBarUtil.setStyle(StatusBarStyle.DARK_CONTENT);
+    StatusBarUtil.setColor(Colors.white, animated: true);
     super.dispose();
   }
 

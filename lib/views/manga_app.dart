@@ -4,6 +4,7 @@ import 'package:flutter_statusbar_manager/flutter_statusbar_manager.dart';
 import 'package:manga_app/blocs/language/language_bloc.dart';
 import 'package:manga_app/common/constants/languages.dart';
 import 'package:manga_app/common/localization.dart';
+import 'package:manga_app/common/status_bar_util.dart';
 import 'package:manga_app/di/get_it.dart';
 import 'package:manga_app/views/screens/explorer_screen.dart';
 import 'package:manga_app/views/screens/home_screen.dart';
@@ -17,22 +18,33 @@ class MangaApp extends StatefulWidget {
   _MangaAppState createState() => _MangaAppState();
 }
 
-class _MangaAppState extends State<MangaApp> {
+class _MangaAppState extends State<MangaApp> with WidgetsBindingObserver {
   final navigatorKey = GlobalKey<NavigatorState>();
   LanguageBloc _languageBloc;
 
   @override
   void initState() {
     super.initState();
-    FlutterStatusbarManager.setStyle(StatusBarStyle.DARK_CONTENT);
-    FlutterStatusbarManager.setColor(Colors.white, animated: true);
+    StatusBarUtil.setStyle(StatusBarStyle.DARK_CONTENT);
+    StatusBarUtil.setColor(Colors.white, animated: true);
     _languageBloc = getItInstance<LanguageBloc>();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     _languageBloc.close();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      StatusBarUtil.restoreCurrent();
+    }
   }
 
   @override

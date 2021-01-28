@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_statusbar_manager/flutter_statusbar_manager.dart';
 import 'package:manga_app/blocs/chapter_detail/chapter_detail_bloc.dart';
 import 'package:manga_app/common/constants/size_constants.dart';
 import 'package:manga_app/common/extensions/size_extension.dart';
+import 'package:manga_app/common/status_bar_util.dart';
 import 'package:manga_app/domain/models/chapter.dart';
 import 'package:manga_app/domain/models/manga.dart';
 import 'package:manga_app/views/themes/app_color.dart';
@@ -41,7 +40,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    FlutterStatusbarManager.setHidden(true);
+    StatusBarUtil.setHidden(true);
 
     refreshCompleter = Completer();
     _chapterDetailBloc = new ChapterDetailBloc();
@@ -59,7 +58,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
   @override
   void dispose() {
     // TODO: implement dispose
-    FlutterStatusbarManager.setHidden(false);
+    StatusBarUtil.setHidden(false);
     _chapterDetailBloc.close();
     super.dispose();
   }
